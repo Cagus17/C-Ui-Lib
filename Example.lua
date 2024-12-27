@@ -1,0 +1,27 @@
+local ArcHub = loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/SimpleSpy/refs/heads/main/Mobile.lua"))()
+local ArchubGui = ArcHub:Create("ArcHub")
+local tab1 = ArchubGui:Tab("Menu")
+local tab2 = ArchubGui:Tab("Setting")
+
+local section1 = tab1:Section("Menu")
+local section2 = tab2:Section("Setting")
+
+section1:Toggle("Toggle", function(s)
+	print(s)
+end)
+
+
+section1:Button("Button", function()
+	print("Button Clicked")
+end)
+section1:Label("Label")
+section1:KeyBind("KeyBind", Enum.KeyCode.E, function()
+end)
+section1:Slider("Slider", 16, 200, function()
+end)
+section1:Dropdown("Vip", {"1", "2", "3"}, function()
+end)
+section1:TextBox("Input Text", function()
+end)
+section1:TextBox("Input Text", function()
+end)
