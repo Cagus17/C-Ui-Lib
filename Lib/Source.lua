@@ -142,13 +142,13 @@ function CircleClick(Button, X, Y)
 end
 
 local ArcHub = {}
-function ArcHub.Create(GuiConfig)
+function ArcHub:Create(GuiConfig)
 	local GuiConfig = GuiConfig or {}
 	GuiConfig.NameHub = GuiConfig.NameHub or "Arc Hub"
 	GuiConfig.Color = GuiConfig.Color or Color3.fromRGB(0, 85, 0)
 	GuiConfig.Color1 = GuiConfig.Color1 or Color3.fromRGB(170, 255, 255)
-	
-	
+
+
 	local nightmarefun = Instance.new("ScreenGui")
 	local Shadow = Instance.new("ImageLabel")
 	local mainFrame = Instance.new("Frame")
@@ -224,7 +224,7 @@ function ArcHub.Create(GuiConfig)
 	nightmares.TextColor3 = GuiConfig.Color
 	nightmares.TextSize = 20.000
 	nightmares.TextWrapped = true
-	
+
 	LogoServer.Image = "rbxassetid://91846793749573"
 	LogoServer.AnchorPoint = Vector2.new(0.5, 0.5)
 	LogoServer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -235,10 +235,10 @@ function ArcHub.Create(GuiConfig)
 	LogoServer.Position = UDim2.new(0.1499999262, 0, 0.0528203665, 0)
 	LogoServer.Size = UDim2.new(0, 30, 0, 30)
 	LogoServer.Parent = mainSide
-	
+
 	LogoCorner.CornerRadius = UDim.new(0, 1000)
 	LogoCorner.Parent = LogoServer
-	
+
 	fun.Name = "fun"
 	fun.Parent = mainSide
 	fun.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -269,7 +269,7 @@ function ArcHub.Create(GuiConfig)
 	tabList.Name = "tabList"
 	tabList.Parent = allTabs
 	tabList.SortOrder = Enum.SortOrder.LayoutOrder
-	
+
 	Close.Font = Enum.Font.SourceSans
 	Close.Text = ""
 	Close.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -283,7 +283,7 @@ function ArcHub.Create(GuiConfig)
 	Close.Size = UDim2.new(0, 25, 0, 25)
 	Close.Name = "Close"
 	Close.Parent = mainFrame
-	
+
 	ImageLabel1.Image = "rbxassetid://9886659671"
 	ImageLabel1.AnchorPoint = Vector2.new(0.5, 0.5)
 	ImageLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -293,7 +293,7 @@ function ArcHub.Create(GuiConfig)
 	ImageLabel1.Position = UDim2.new(0.366315782, 0, 0.5, 0)
 	ImageLabel1.Size = UDim2.new(1, -8, 1, -8)
 	ImageLabel1.Parent = Close
-	
+
 	Min.Font = Enum.Font.SourceSans
 	Min.Text = ""
 	Min.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -318,7 +318,7 @@ function ArcHub.Create(GuiConfig)
 	ImageLabel2.Position = UDim2.new(0.366315782, 0, 0.5, 0)
 	ImageLabel2.Size = UDim2.new(1, -9, 1, -9)
 	ImageLabel2.Parent = Min
-	
+
 	allPages.Name = "allPages"
 	allPages.Parent = mainFrame
 	allPages.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -328,34 +328,37 @@ function ArcHub.Create(GuiConfig)
 
 	pages.Name = "pages"
 	pages.Parent = allPages
-	
+
 	Close.Activated:Connect(function()
 		CircleClick(Close, Mouse.X, Mouse.Y)
 		Shadow.Visible = false
 	end)
+	local isMinimized = false
 	Min.Activated:Connect(function()
 		CircleClick(Min, Mouse.X, Mouse.Y)
 		Shadow.Visible = false
 	end)
-	local tabHandling = {}
 
-	function tabHandling:Tab(tabText)
+	local Tabs = {}
+	function Tabs:TabCreate(TabConfig)
 		--------------------------
-		tabText = tabText or "Tab"
+		local TabConfig = TabConfig or {}
+		TabConfig.Name = TabConfig.Name or "Tab"
+		TabConfig.Color = TabConfig.Color or  Color3.fromRGB(255, 0, 255)
 		--------------------------
 		local tabButton = Instance.new("TextButton")
-		tabButton.Name = "tabButton"..tabText
+		tabButton.Name = ""
 		tabButton.Parent = allTabs
 		tabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		tabButton.BackgroundTransparency = 1.000
 		tabButton.Size = UDim2.new(0, 149, 0, 35)
 		tabButton.Font = Enum.Font.Gotham
-		tabButton.Text = tabText
+		tabButton.Text = TabConfig.Name
 		tabButton.TextColor3 = Color3.fromRGB(87, 87, 104)
 		tabButton.TextSize = 16.000
 
 		local newPage = Instance.new("ScrollingFrame")
-		newPage.Name = "newPage"..tabText
+		newPage.Name = TabConfig.Name .. "Page"
 		newPage.Parent = pages
 		newPage.Active = true
 		newPage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -363,7 +366,7 @@ function ArcHub.Create(GuiConfig)
 		newPage.BorderSizePixel = 0
 		newPage.Size = UDim2.new(1, 0, 1, 0)
 		newPage.ScrollBarThickness = 6
-		newPage.ScrollBarImageColor3 = GuiConfig.Color
+		newPage.ScrollBarImageColor3 = TabConfig.Color
 		newPage.Visible = false
 
 		local sectionListing = Instance.new("UIListLayout")    
@@ -396,7 +399,7 @@ function ArcHub.Create(GuiConfig)
 				end
 			end
 			game.TweenService:Create(tabButton, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-				TextColor3 = GuiConfig.Color
+				TextColor3 = TabConfig.Color
 			}):Play()
 			----------------------
 			--Page Functioning
@@ -406,15 +409,17 @@ function ArcHub.Create(GuiConfig)
 			end
 			newPage.Visible = true
 			----------------------
-	end)
+			return tabButton
+		end)
 
 		local sectionHandling = {}
 		local isDropped = false
 
-	function sectionHandling:Section(sectionName)
-			---
-			sectionName = sectionName or "Section"
-			---
+		function sectionHandling:Section(sectionName)
+			local sectionName = sectionName or {}
+			sectionName.Name = sectionName.Name or "Section"
+			sectionName.Color = sectionName.Color or  Color3.fromRGB(255, 0, 255)
+
 			local sectionFrame = Instance.new("Frame")
 			local UICorner = Instance.new("UICorner")
 			local sectionListLayout = Instance.new("UIListLayout")
@@ -462,7 +467,7 @@ function ArcHub.Create(GuiConfig)
 			TextLabel.Position = UDim2.new(0.0992907807, 0, 0.194444448, 0)
 			TextLabel.Size = UDim2.new(0, 173, 0, 22)
 			TextLabel.Font = Enum.Font.Gotham
-			TextLabel.Text = sectionName
+			TextLabel.Text = sectionName.Name
 			TextLabel.TextColor3 = Color3.fromRGB(82, 82, 98)
 			TextLabel.TextSize = 14.000
 			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -500,21 +505,34 @@ function ArcHub.Create(GuiConfig)
 					sectionFrame:TweenSize(UDim2.new(0.956, 0, 0, sectionListLayout.AbsoluteContentSize.Y + 8), "In", "Linear", 0.10)
 					game.TweenService:Create(closeSection, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 						Rotation = 180,
-						ImageColor3 = GuiConfig.Color
+						ImageColor3 = sectionName.Color
 					}):Play()
 					game.TweenService:Create(sectionCircle, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-						BackgroundColor3 = GuiConfig.Color1
+						BackgroundColor3 = sectionName.Color
 					}):Play()
 					game.TweenService:Create(TextLabel, TweenInfo.new(0.10, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-						TextColor3 = GuiConfig.Color1
+						TextColor3 = sectionName.Color
 					}):Play()
 					wait(0.10)
 					UpdateSize()
 				end
 			end)
-
+			local OpenSection = true
+			local function UpdateSizeSection()
+				if OpenSection then
+					local SectionSizeYWitdh = 38
+					for i, v in sectionFrame:GetChildren() do
+						if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+							SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
+						end
+					end
+					tween:Create(sectionFrame, TweenInfo.new(0.5), {Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)}):Play()
+					task.wait(0.5)
+					UpdateSize()
+				end
+			end
 			local itemHandling = {}
-
+			local CountItem = 0
 			function itemHandling:Button(btnText, callback)
 				----
 				btnText = btnText or "Click Me!"
@@ -624,371 +642,402 @@ function ArcHub.Create(GuiConfig)
 					end
 				end)
 			end
-			function itemHandling:Toggle(togInfo, callback)
-				local tog = false
-				togInfo = togInfo or "Toggle"
-				callback = callback or function() end
-				local toggleFrame = Instance.new("Frame")
-				local checkBox = Instance.new("ImageButton")
-				local UIListLayout = Instance.new("UIListLayout")
-				local checkBoxInfo = Instance.new("TextLabel")
+			function itemHandling:Toggle(ToggleConfig)
+				local ToggleConfig = ToggleConfig or {}
+				ToggleConfig.Title = ToggleConfig.Title or "Title"
+				ToggleConfig.Default = ToggleConfig.Default or false
+				ToggleConfig.Callback = ToggleConfig.Callback or function() end
+				local ToggleFunc = {Value = ToggleConfig.Default, Options = ToggleConfig.Options, Selecting = ToggleConfig.Selecting}
 
-				toggleFrame.Name = "toggleFrame"
-				toggleFrame.Parent = sectionFrame
-				toggleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				toggleFrame.BackgroundTransparency = 1.000
-				toggleFrame.Position = UDim2.new(0.0354609936, 0, 0.344827592, 0)
-				toggleFrame.Size = UDim2.new(0, 262, 0, 25)
+				local Toggle = Instance.new("Frame");
+				local UICorner20 = Instance.new("UICorner");
+				local ToggleTitle = Instance.new("TextLabel");
+				local ToggleButton = Instance.new("TextButton");
+				local Frame = Instance.new("Frame");
+				local ImageLabel3 = Instance.new("ImageLabel");
+				local UICorner21 = Instance.new("UICorner");
+				local TextButton = Instance.new("TextButton");
+				local FeatureFrame2 = Instance.new("Frame");
+				local UICorner22 = Instance.new("UICorner");
+				local UIStroke8 = Instance.new("UIStroke");
+				local ToggleCircle = Instance.new("Frame");
+				local UICorner23 = Instance.new("UICorner");
 
-				checkBox.Name = "checkBox"
-				checkBox.Parent = toggleFrame
-				checkBox.BackgroundColor3 = Color3.fromRGB(47, 47, 56)
-				checkBox.BackgroundTransparency = 1.000
-				checkBox.Position = UDim2.new(-0.0381679386, 0, 0.0263157934, 0)
-				checkBox.Size = UDim2.new(0, 25, 0, 25)
-				checkBox.ZIndex = 2
-				checkBox.Image = "rbxassetid://3926311105"
-				checkBox.ImageColor3 = Color3.fromRGB(62, 62, 74)
-				checkBox.ImageRectOffset = Vector2.new(940, 784)
-				checkBox.ImageRectSize = Vector2.new(48, 48)
+				Toggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Toggle.BackgroundTransparency = 0.9990000128746033
+				Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Toggle.BorderSizePixel = 0
+				Toggle.LayoutOrder = CountItem
+				Toggle.Size = UDim2.new(1, 0, 0, 46)
+				Toggle.Name = "Toggle"
+				Toggle.Parent = sectionFrame
 
-				UIListLayout.Parent = toggleFrame
-				UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-				UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-				UIListLayout.Padding = UDim.new(0, 3)
+				UICorner20.CornerRadius = UDim.new(0, 4)
+				UICorner20.Parent = Toggle
 
-				checkBoxInfo.Name = "checkBoxInfo"
-				checkBoxInfo.Parent = toggleFrame
-				checkBoxInfo.BackgroundColor3 = Color3.fromRGB(47, 47, 56)
-				checkBoxInfo.BackgroundTransparency = 1.000
-				checkBoxInfo.Position = UDim2.new(0.106870227, 0, -0.157894731, 0)
-				checkBoxInfo.Size = UDim2.new(0, 200, 0, 19)
-				checkBoxInfo.Font = Enum.Font.Gotham
-				checkBoxInfo.Text = togInfo
-				checkBoxInfo.TextColor3 = Color3.fromRGB(62, 62, 74)
-				checkBoxInfo.TextSize = 14.000
-				checkBoxInfo.TextXAlignment = Enum.TextXAlignment.Left
-				local clickDe = false
-				local hoverDe = false
+				ToggleTitle.Font = Enum.Font.GothamBold
+				ToggleTitle.Text = ToggleConfig.Title
+				ToggleTitle.TextSize = 13
+				ToggleTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+				ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
+				ToggleTitle.TextYAlignment = Enum.TextYAlignment.Top
+				ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				ToggleTitle.BackgroundTransparency = 0.9990000128746033
+				ToggleTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ToggleTitle.BorderSizePixel = 0
+				ToggleTitle.Position = UDim2.new(0, 10, 0, 10)
+				ToggleTitle.Size = UDim2.new(1, -100, 0, 13)
+				ToggleTitle.Name = "ToggleTitle"
+				ToggleTitle.Parent = Toggle
 
-				checkBox.MouseEnter:Connect(function()
-					if not tog then
-						game.TweenService:Create(checkBox, TweenInfo.new(0.08, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-							ImageColor3 = Color3.fromRGB(53, 53, 63)
-						}):Play()
+				ToggleButton.Font = Enum.Font.SourceSans
+				ToggleButton.Text = ""
+				ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+				ToggleButton.TextSize = 14
+				ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+				ToggleButton.BackgroundTransparency = 0.9990000128746033
+				ToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ToggleButton.BorderSizePixel = 0
+				ToggleButton.Size = UDim2.new(1, 0, 1, 0)
+				ToggleButton.Name = "ToggleButton"
+				ToggleButton.Parent = Toggle
+
+				FeatureFrame2.AnchorPoint = Vector2.new(1, 0.5)
+				FeatureFrame2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				FeatureFrame2.BackgroundTransparency = 0.9200000166893005
+				FeatureFrame2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				FeatureFrame2.BorderSizePixel = 0
+				FeatureFrame2.Position = UDim2.new(1, -30, 0.5, 0)
+				FeatureFrame2.Size = UDim2.new(0, 30, 0, 15)
+				FeatureFrame2.Name = "FeatureFrame"
+				FeatureFrame2.Parent = Toggle
+
+				UICorner22.Parent = FeatureFrame2
+
+				UIStroke8.Color = Color3.fromRGB(255, 255, 255)
+				UIStroke8.Thickness = 2
+				UIStroke8.Transparency = 0.9
+				UIStroke8.Parent = FeatureFrame2
+
+				ToggleCircle.BackgroundColor3 = Color3.fromRGB(230.00000149011612, 230.00000149011612, 230.00000149011612)
+				ToggleCircle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ToggleCircle.BorderSizePixel = 0
+				ToggleCircle.Position = UDim2.new(0, 0, 0, 0)
+				ToggleCircle.Size = UDim2.new(0, 14, 0, 14)
+				ToggleCircle.Name = "ToggleCircle"
+				ToggleCircle.Parent = FeatureFrame2
+
+				UICorner23.CornerRadius = UDim.new(0, 15)
+				UICorner23.Parent = ToggleCircle
+
+				ToggleButton.Activated:Connect(function()
+					CircleClick(ToggleButton, Mouse.X, Mouse.Y) 
+					ToggleFunc.Value = not ToggleFunc.Value
+					ToggleFunc:Set(ToggleFunc.Value)
+				end)
+				function ToggleFunc:Set(Value)
+					ToggleConfig.Callback(Value)
+					if Value then
+						tween:Create(
+							ToggleTitle,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{TextColor3 = GuiConfig.Color}
+						):Play()
+						tween:Create(
+							ToggleCircle,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{Position = UDim2.new(0, 15, 0, 0)}
+						):Play()
+						tween:Create(
+							UIStroke8,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{Color = GuiConfig.Color, Transparency = 0}
+						):Play()
+						tween:Create(
+							FeatureFrame2,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{BackgroundColor3 = GuiConfig.Color, BackgroundTransparency = 0} 
+						):Play()
 					else
-						game.TweenService:Create(checkBox, TweenInfo.new(0.08, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-							ImageColor3 = GuiConfig.Color
-						}):Play()
+						tween:Create(
+							ToggleTitle,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)}
+						):Play()
+						tween:Create(
+							ToggleCircle,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{Position = UDim2.new(0, 0, 0, 0)}
+						):Play()
+						tween:Create(
+							UIStroke8,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{Color = Color3.fromRGB(255, 255, 255), Transparency = 0.9}
+						):Play()
+						tween:Create(
+							FeatureFrame2,
+							TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+							{BackgroundColor3 = Color3.fromRGB(255, 255, 255), BackgroundTransparency = 0.9200000166893005}
+						):Play()
 					end
-				end)
-
-				checkBox.MouseLeave:Connect(function()
-					if not tog then
-						checkBox.Parent:TweenSize(UDim2.new(0, 262,0, 25), "InOut", "Linear", 0.08)
-						game.TweenService:Create(checkBox, TweenInfo.new(0.08, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-							ImageColor3 = Color3.fromRGB(62, 62, 74)
-						}):Play()
-					else
-						checkBox.Parent:TweenSize(UDim2.new(0, 262,0, 25), "InOut", "Linear", 0.08)
-						game.TweenService:Create(checkBox, TweenInfo.new(0.08, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-							ImageColor3 = GuiConfig.Color
-						}):Play()
-					end
-				end)
-
-				checkBox.MouseButton1Down:Connect(function()
-					if not hoverDe then
-						hoverDe = true
-						checkBox.Parent:TweenSize(UDim2.new(0, 255,0, 25), "InOut", "Linear", 0.08)
-						wait(0.8)
-						hoverDe = false
-					end
-				end)
-				checkBox.MouseButton1Up:Connect(function()
-					checkBox.Parent:TweenSize(UDim2.new(0, 262,0, 25), "InOut", "Linear", 0.08)
-				end)
-
-				checkBox.MouseButton1Click:Connect(function()
-					if not clickDe then
-						clickDe = true
-						tog = not tog
-						callback(tog)
-						if tog then
-							game.TweenService:Create(checkBox.Parent.checkBoxInfo, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-								TextColor3 = GuiConfig.Color
-							}):Play()
-							checkBox.ImageRectOffset = Vector2.new(4, 836)
-							game.TweenService:Create(checkBox, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-								ImageColor3 = GuiConfig.Color
-							}):Play()
-						else
-							game.TweenService:Create(checkBox.Parent.checkBoxInfo, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-								TextColor3 = Color3.fromRGB(62, 62, 74)
-							}):Play()
-							checkBox.ImageRectOffset = Vector2.new(940, 784)
-							game.TweenService:Create(checkBox, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
-								ImageColor3 = Color3.fromRGB(62, 62, 74)
-							}):Play()
-						end
-						wait(0.8)
-						clickDe = false
-					end
-				end)
+				end
+				ToggleFunc:Set(ToggleFunc.Value)
+				CountItem = CountItem + 1
+				return ToggleFunc
 			end
-			function itemHandling:TextBox(textInfo, callback)
-				textInfo = textInfo or "Type here"
-				callback = callback or function() end
+			function itemHandling:TextBox(InputConfig)
+				local InputConfig = InputConfig or {}
+				InputConfig.Title = InputConfig.Title or "Title"
+				InputConfig.Callback = InputConfig.Callback or function() end
+				local InputFunc = {Value = ""}
 
-				local textBoxFrame = Instance.new("Frame")
-				local UIListLayout = Instance.new("UIListLayout")
-				local TextBox = Instance.new("TextBox")
-				local UICorner = Instance.new("UICorner")
+				local Input = Instance.new("Frame");
+				local UICorner12 = Instance.new("UICorner");
+				local InputTitle = Instance.new("TextLabel");
+				local InputFrame = Instance.new("Frame");
+				local UICorner13 = Instance.new("UICorner");
+				local InputTextBox = Instance.new("TextBox");
 
-				textBoxFrame.Name = "textBoxFrame"
-				textBoxFrame.Parent = sectionFrame
-				textBoxFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 52)
-				textBoxFrame.BackgroundTransparency = 1.000
-				textBoxFrame.Position = UDim2.new(0.0354609936, 0, 0.344827592, 0)
-				textBoxFrame.Size = UDim2.new(0, 262, 0, 28)
+				Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Input.BackgroundTransparency = 0.9990000128746033
+				Input.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Input.BorderSizePixel = 0
+				Input.LayoutOrder = CountItem
+				Input.Size = UDim2.new(1, 0, 0, 46)
+				Input.Name = "Input"
+				Input.Parent = sectionFrame
 
-				UIListLayout.Parent = textBoxFrame
-				UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-				UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-				UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-				UIListLayout.Padding = UDim.new(0, 3)
+				UICorner12.CornerRadius = UDim.new(0, 4)
+				UICorner12.Parent = Input
 
-				TextBox.Parent = textBoxFrame
-				TextBox.BackgroundColor3 = Color3.fromRGB(43, 43, 52)
-				TextBox.Position = UDim2.new(0, 0, 0.106060609, 0)
-				TextBox.Size = UDim2.new(0, 262, 0, 26)
-				TextBox.ClearTextOnFocus = false
-				TextBox.Font = Enum.Font.SourceSans
-				TextBox.PlaceholderText = textInfo
-				TextBox.Text = ""
-				TextBox.TextColor3 = GuiConfig.Color
-				TextBox.TextSize = 16.000
+				InputTitle.Font = Enum.Font.GothamBold
+				InputTitle.Text = InputConfig.Title
+				InputTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+				InputTitle.TextSize = 13
+				InputTitle.TextXAlignment = Enum.TextXAlignment.Left
+				InputTitle.TextYAlignment = Enum.TextYAlignment.Top
+				InputTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				InputTitle.BackgroundTransparency = 0.9990000128746033
+				InputTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				InputTitle.BorderSizePixel = 0
+				InputTitle.Position = UDim2.new(0, 10, 0, 10)
+				InputTitle.Size = UDim2.new(1, -180, 0, 13)
+				InputTitle.Name = "InputTitle"
+				InputTitle.Parent = Input
+
+				InputFrame.AnchorPoint = Vector2.new(1, 0.5)
+				InputFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				InputFrame.BackgroundTransparency = 0.949999988079071
+				InputFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				InputFrame.BorderSizePixel = 0
+				InputFrame.ClipsDescendants = true
+				InputFrame.Position = UDim2.new(1, -7, 0.5, 0)
+				InputFrame.Size = UDim2.new(0, 148, 0, 30)
+				InputFrame.Name = "InputFrame"
+				InputFrame.Parent = Input
+
+				UICorner13.CornerRadius = UDim.new(0, 4)
+				UICorner13.Parent = InputFrame
+
+				InputTextBox.CursorPosition = -1
+				InputTextBox.Font = Enum.Font.GothamBold
+				InputTextBox.PlaceholderColor3 = Color3.fromRGB(120.00000044703484, 120.00000044703484, 120.00000044703484)
+				InputTextBox.PlaceholderText = "Write your input there"
+				InputTextBox.Text = ""
+				InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				InputTextBox.TextSize = 12
+				InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
+				InputTextBox.AnchorPoint = Vector2.new(0, 0.5)
+				InputTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				InputTextBox.BackgroundTransparency = 0.9990000128746033
+				InputTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				InputTextBox.BorderSizePixel = 0
+				InputTextBox.Position = UDim2.new(0, 5, 0.5, 0)
+				InputTextBox.Size = UDim2.new(1, -10, 1, -8)
+				InputTextBox.Name = "InputTextBox"
+				InputTextBox.Parent = InputFrame
+				function InputFunc:Set(Value)
+					InputTextBox.Text = Value
+					InputFunc.Value = Value
+					InputConfig.Callback(Value)
+				end
+				InputTextBox.FocusLost:Connect(function()
+					InputFunc:Set(InputTextBox.Text)
+				end)
+				CountItem = CountItem + 1
+				return InputFunc
+			end
+
+			function itemHandling:Slider(SliderConfig)
+				local SliderConfig = SliderConfig or {}
+				SliderConfig.Title = SliderConfig.Title or "Slider"
+				SliderConfig.Content = SliderConfig.Content or "Content"
+				SliderConfig.Increment = SliderConfig.Increment or 1
+				SliderConfig.Min = SliderConfig.Min or 0
+				SliderConfig.Max = SliderConfig.Max or 100
+				SliderConfig.Default = SliderConfig.Default or 50
+				SliderConfig.Callback = SliderConfig.Callback or function() end
+				local SliderFunc = {Value = SliderConfig.Default}
+
+				local Slider = Instance.new("Frame");
+				local UICorner15 = Instance.new("UICorner");
+				local SliderTitle = Instance.new("TextLabel");
+				local SliderInput = Instance.new("Frame");
+				local UICorner16 = Instance.new("UICorner");
+				local TextBox = Instance.new("TextBox");
+				local SliderFrame = Instance.new("Frame");
+				local UICorner17 = Instance.new("UICorner");
+				local SliderDraggable = Instance.new("Frame");
+				local UICorner18 = Instance.new("UICorner");
+				local UIStroke5 = Instance.new("UIStroke");
+				local SliderCircle = Instance.new("Frame");
+				local UICorner19 = Instance.new("UICorner");
+				local UIStroke6 = Instance.new("UIStroke");
+				local UIStroke7 = Instance.new("UIStroke");
+
+				Slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Slider.BackgroundTransparency = 0.9990000128746033
+				Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Slider.BorderSizePixel = 0
+				Slider.LayoutOrder = CountItem
+				Slider.Size = UDim2.new(1, 0, 0, 46)
+				Slider.Name = "Slider"
+				Slider.Parent = sectionFrame
+
+				UICorner15.CornerRadius = UDim.new(0, 4)
+				UICorner15.Parent = Slider
+
+				SliderTitle.Font = Enum.Font.GothamBold
+				SliderTitle.Text = SliderConfig.Title
+				SliderTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+				SliderTitle.TextSize = 13
+				SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
+				SliderTitle.TextYAlignment = Enum.TextYAlignment.Top
+				SliderTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				SliderTitle.BackgroundTransparency = 0.9990000128746033
+				SliderTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				SliderTitle.BorderSizePixel = 0
+				SliderTitle.Position = UDim2.new(0, 10, 0, 10)
+				SliderTitle.Size = UDim2.new(1, -180, 0, 13)
+				SliderTitle.Name = "SliderTitle"
+				SliderTitle.Parent = Slider
+
+				SliderInput.AnchorPoint = Vector2.new(0, 0.5)
+				SliderInput.BackgroundColor3 = GuiConfig.Color
+				SliderInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				SliderInput.BorderSizePixel = 0
+				SliderInput.Position = UDim2.new(1, -155, 0.5, 0)
+				SliderInput.Size = UDim2.new(0, 28, 0, 20)
+				SliderInput.Name = "SliderInput"
+				SliderInput.Parent = Slider
+
+				UICorner16.CornerRadius = UDim.new(0, 2)
+				UICorner16.Parent = SliderInput
+
+				TextBox.Font = Enum.Font.GothamBold
+				TextBox.Text = "90"
+				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextBox.TextSize = 13
 				TextBox.TextWrapped = true
+				TextBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+				TextBox.BackgroundTransparency = 0.9990000128746033
+				TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextBox.BorderSizePixel = 0
+				TextBox.Position = UDim2.new(0, -1, 0, 0)
+				TextBox.Size = UDim2.new(1, 0, 1, 0)
+				TextBox.Parent = SliderInput
 
-				UICorner.CornerRadius = UDim.new(0, 5)
-				UICorner.Parent = TextBox
+				SliderFrame.AnchorPoint = Vector2.new(1, 0.5)
+				SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				SliderFrame.BackgroundTransparency = 0.800000011920929
+				SliderFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				SliderFrame.BorderSizePixel = 0
+				SliderFrame.Position = UDim2.new(1, -20, 0.5, 0)
+				SliderFrame.Size = UDim2.new(0, 100, 0, 3)
+				SliderFrame.Name = "SliderFrame"
+				SliderFrame.Parent = Slider
 
-				-- Fungsi animasi
-				local function anim(property)
-					if property == "Text" and TextBox.Text ~= "" then
-						TextBox:TweenSize(UDim2.new(0, 250, 0, 22), "InOut", "Linear", 0.1, true)
-						wait(0.18)
-						TextBox:TweenSize(UDim2.new(0, 262, 0, 26), "InOut", "Linear", 0.1, true)
+				UICorner17.Parent = SliderFrame
+
+				SliderDraggable.AnchorPoint = Vector2.new(0, 0.5)
+				SliderDraggable.BackgroundColor3 = GuiConfig.Color
+				SliderDraggable.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				SliderDraggable.BorderSizePixel = 0
+				SliderDraggable.Position = UDim2.new(0, 0, 0.5, 0)
+				SliderDraggable.Size = UDim2.new(0.899999976, 0, 0, 1)
+				SliderDraggable.Name = "SliderDraggable"
+				SliderDraggable.Parent = SliderFrame
+
+				UICorner18.Parent = SliderDraggable
+
+				SliderCircle.AnchorPoint = Vector2.new(1, 0.5)
+				SliderCircle.BackgroundColor3 = GuiConfig.Color
+				SliderCircle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				SliderCircle.BorderSizePixel = 0
+				SliderCircle.Position = UDim2.new(1, 4, 0.5, 0)
+				SliderCircle.Size = UDim2.new(0, 8, 0, 8)
+				SliderCircle.Name = "SliderCircle"
+				SliderCircle.Parent = SliderDraggable
+
+				UICorner19.Parent = SliderCircle
+
+				UIStroke6.Color = GuiConfig.Color
+				UIStroke6.Parent = SliderCircle
+
+				local Dragging = false
+				local function Round(Number, Factor)
+					local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
+					if Result < 0 then 
+						Result = Result + Factor 
 					end
+					return Result
 				end
-
-				-- Sambungkan ke perubahan properti
-				TextBox.Changed:Connect(anim)
-
-				-- Tangani saat fokus hilang
-				TextBox.FocusLost:Connect(function(EnterPressed)
-					if not EnterPressed then return end
-					callback(TextBox.Text)
-					TextBox:TweenSize(UDim2.new(0, 250, 0, 22), "InOut", "Linear", 0.1, true)
-					wait(0.18)
-					TextBox:TweenSize(UDim2.new(0, 262, 0, 26), "InOut", "Linear", 0.1, true)
-					TextBox.Text = ""
-				end)
-			end
-
-			function itemHandling:Slider(sliderInf, maxvalue, minvalue, callback)
-
-				local sliderfunc = {}
-
-
-				local sliderFrame = Instance.new("Frame")
-				local sliderIinfo = Instance.new("TextLabel")
-				local sliderBtn = Instance.new("TextButton")
-				local UIListLayout = Instance.new("UIListLayout")
-				local SliderDrag = Instance.new("Frame")
-				local UICorner = Instance.new("UICorner")
-				local UICorner_1 = Instance.new("UICorner")
-				local sliderBox = Instance.new("TextBox")
-				sliderInf = sliderInf or "Slider"
-
-				sliderFrame.Name = "sliderFrame"
-				sliderFrame.Parent = sectionFrame
-				sliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				sliderFrame.BackgroundTransparency = 1.000
-				sliderFrame.Position = UDim2.new(0.0354609936, 0, 0.658653855, 0)
-				sliderFrame.Size = UDim2.new(0, 262, 0, 32)
-
-				sliderIinfo.Name = "sliderIinfo"
-				sliderIinfo.Parent = sliderFrame
-				sliderIinfo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				sliderIinfo.BackgroundTransparency = 1.000
-				sliderIinfo.Position = UDim2.new(0, 0, -0.0102040814, 0)
-				sliderIinfo.Size = UDim2.new(0, 169, 0, 18)
-				sliderIinfo.Font = Enum.Font.Gotham
-				sliderIinfo.Text = sliderInf
-				sliderIinfo.TextColor3 = GuiConfig.Color
-				sliderIinfo.TextSize = 14.000
-				sliderIinfo.TextXAlignment = Enum.TextXAlignment.Left
-
-				sliderBtn.Name = "sliderBtn"
-				sliderBtn.Parent = sliderFrame
-				sliderBtn.BackgroundColor3 = Color3.fromRGB(47, 47, 56)
-				sliderBtn.BorderSizePixel = 0
-				sliderBtn.Position = UDim2.new(0, 0, 0.616923094, 0)
-				sliderBtn.Size = UDim2.new(0, 262, 0, 9)
-				sliderBtn.AutoButtonColor = false
-				sliderBtn.Font = Enum.Font.SourceSans
-				sliderBtn.Text = ""
-				sliderBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-				sliderBtn.TextSize = 14.000
-				sliderBtn.ClipsDescendants = true
-
-				UIListLayout.Parent = sliderBtn
-				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-				UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-
-				SliderDrag.Name = "SliderDrag"
-				SliderDrag.Parent = sliderBtn
-				SliderDrag.BackgroundColor3 = GuiConfig.Color
-				SliderDrag.BorderColor3 = GuiConfig.Color
-				SliderDrag.BorderSizePixel = 0
-				SliderDrag.Size = UDim2.new(0, 0, 0, 9)
-
-				UICorner.CornerRadius = UDim.new(0, 99)
-				UICorner.Parent = SliderDrag
-
-				UICorner_1.CornerRadius = UDim.new(0, 99)
-				UICorner_1.Parent = sliderBtn
-
-				sliderBox.Name = "sliderBox"
-				sliderBox.Parent = sliderFrame
-				sliderBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				sliderBox.BackgroundTransparency = 1.000
-				sliderBox.Position = UDim2.new(0.645038188, 0, 0.0769230798, 0)
-				sliderBox.Size = UDim2.new(0, 92, 0, 14)
-				sliderBox.ClearTextOnFocus = false
-				sliderBox.Font = Enum.Font.Gotham
-				sliderBox.Text = minvalue
-				sliderBox.TextColor3 = Color3.fromRGB(96, 96, 115)
-				sliderBox.TextScaled = true
-				sliderBox.TextSize = 14.000
-				sliderBox.TextWrapped = true
-				sliderBox.TextXAlignment = Enum.TextXAlignment.Right
-				sliderBox.TextEditable = true
-
-				local uis = game:GetService("UserInputService")
-				local Value
-				local moveconnection
-				local releaseconnection
-
-				sliderBtn.MouseButton1Down:Connect(function()
-					-- Validasi nilai minvalue dan maxvalue
-					local minValue = 0
-					local maxValue = 100
-
-					if minValue >= maxValue then
-						warn("minvalue tidak boleh lebih besar atau sama dengan maxvalue")
-						return
-					end
-
-					-- Perhitungan nilai awal slider
-					Value = math.floor((((maxValue - minValue) / 262) * SliderDrag.AbsoluteSize.X) + minValue)
-					pcall(function()
-						callback(Value)
-					end)
-
-					SliderDrag:TweenSize(
-						UDim2.new(0, math.clamp(Mouse.X - SliderDrag.AbsolutePosition.X, 0, 262), 0, 9),
-						"InOut",
-						"Linear",
-						0.05,
-						true
-					)
-
-					-- Koneksi untuk pergerakan slider
-					moveconnection = Mouse.Move:Connect(function()
-						local newSize = math.clamp(Mouse.X - SliderDrag.AbsolutePosition.X, 0, 262)
-						SliderDrag:TweenSize(UDim2.new(0, newSize, 0, 9), "InOut", "Linear", 0.05, true)
-
-						local newValue = math.floor((((maxValue - minValue) / 262) * newSize) + minValue)
-						if newValue ~= Value then
-							Value = newValue
-							sliderBox.Text = Value
-							pcall(function()
-								callback(Value)
-							end)
-						end
-					end)
-
-					-- Koneksi untuk melepaskan slider
-					releaseconnection = uis.InputEnded:Connect(function(input)
-						if input.UserInputType == Enum.UserInputType.MouseButton1 then
-							if moveconnection then moveconnection:Disconnect() end
-							if releaseconnection then releaseconnection:Disconnect() end
-
-							-- Hitung nilai akhir
-							local finalSize = math.clamp(Mouse.X - SliderDrag.AbsolutePosition.X, 0, 262)
-							SliderDrag:TweenSize(UDim2.new(0, finalSize, 0, 9), "InOut", "Linear", 0.05, true)
-
-							Value = math.floor((((maxValue - minValue) / 262) * finalSize) + minValue)
-							sliderBox.Text = Value
-							pcall(function()
-								callback(Value)
-							end)
-						end
-					end)
-				end)
-
-				local function set(property)
-					local minValue = tonumber(minvalue) or 0
-					local maxValue = tonumber(maxvalue) or 100
-					if property == "Text" then
-						local inputValue = tonumber(sliderBox.Text)
-
-						-- Pastikan input valid
-						if inputValue then
-							-- Batasi nilai di antara minvalue dan maxvalue
-							inputValue = math.clamp(inputValue, minvalue, maxvalue)
-
-							Value = inputValue
-							SliderDrag:TweenSize(UDim2.new((inputValue - minValue) / (maxValue - minValue), 0, 0, 9), "InOut", "Linear", 0.05, true)
-							pcall(function()
-								callback(Value)
-							end)
-						else
-							sliderBox.Text = minValue
-						end
-					end
+				function SliderFunc:Set(Value)
+					Value = math.clamp(Round(Value, SliderConfig.Increment), SliderConfig.Min, SliderConfig.Max)
+					SliderFunc.Value = Value
+					TextBox.Text = tostring(Value)
+					tween:Create(
+						SliderDraggable,
+						TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+						{Size = UDim2.fromScale((Value - SliderConfig.Min) / (SliderConfig.Max - SliderConfig.Min), 1)}
+					):Play()
 				end
-
-				sliderBox.Focused:Connect(function()
-					sliderBox.Changed:Connect(set)
+				SliderFrame.InputBegan:Connect(function(Input)
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Dragging = true 
+					end 
 				end)
-
-				sliderBox.FocusLost:Connect(function(enterP)
-					local minValue = tonumber(minvalue) or 0
-					local maxValue = tonumber(maxvalue) or 100
-					if not enterP then
-						local inputValue = tonumber(sliderBox.Text)
-
-						if inputValue then
-							-- Pastikan input valid dan berada dalam range
-							Value = math.clamp(inputValue, minvalue, maxvalue)
-						else
-							Value = minvalue
-						end
-
-						sliderBox.Text = tostring(Value)
-						SliderDrag:TweenSize(UDim2.new((Value - minValue) / (maxValue - minValue), 0, 0, 9), "InOut", "Linear", 0.05, true)
-						pcall(function()
-							callback(Value)
-						end)
+				SliderFrame.InputEnded:Connect(function(Input) 
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Dragging = false 
+						SliderConfig.Callback(SliderFunc.Value)
+					end 
+				end)
+				input.InputChanged:Connect(function(Input)
+					if Dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then 
+						local SizeScale = math.clamp((Input.Position.X - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X, 0, 1)
+						SliderFunc:Set(SliderConfig.Min + ((SliderConfig.Max - SliderConfig.Min) * SizeScale)) 
 					end
 				end)
-
-				return sliderfunc
+				TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local Valid = TextBox.Text:gsub("[^%d]", "")
+					if Valid ~= "" then
+						local ValidNumber = math.min(tonumber(Valid), SliderConfig.Max)
+						TextBox.Text = tostring(ValidNumber)
+					else
+						TextBox.Text = tostring(Valid)
+					end
+				end)
+				TextBox.FocusLost:Connect(function()
+					if TextBox.Text ~= "" then
+						SliderFunc:Set(tonumber(TextBox.Text))
+					else
+						SliderFunc:Set(0)
+					end
+				end)
+				SliderFunc:Set(tonumber(SliderConfig.Default))
+				CountItem = CountItem + 1
+				return SliderFunc
 			end
 
 			function itemHandling:Label(txtLabel)
@@ -1247,6 +1296,6 @@ function ArcHub.Create(GuiConfig)
 		end
 		return sectionHandling
 	end
-	return tabHandling
+	return Tabs
 end
 return ArcHub

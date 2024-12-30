@@ -1,27 +1,53 @@
 local ArcHub = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cagus17/C-Ui-Lib/refs/heads/main/Lib/Source.lua"))()
-local ArchubGui = ArcHub:Create("ArcHub")
-local tab1 = ArchubGui:Tab("Menu")
-local tab2 = ArchubGui:Tab("Setting")
+local ArchubGui = ArcHub:Create({
+	["NameHub"] = "Cagus Hub",
+	["Color"] = Color3.fromRGB(0, 85, 0),
+	MinimizeKey = Enum.KeyCode.LeftControl
+})
 
-local section1 = tab1:Section("Menu")
-local section2 = tab2:Section("Setting")
+local Tab1 = ArchubGui:TabCreate({
+	["Name"] = "Menu",
+	["Color"] = Color3.fromRGB(0, 170, 255)
+})
 
-section1:Toggle("Toggle", function(s)
-	print(s)
-end)
+local Tab2 = ArchubGui:TabCreate({
+	["Name"] = "Vip",
+	["Color"] = Color3.fromRGB(0, 170, 255)
+})
 
+local Section1 = Tab1:Section({
+	["Name"] = "Farming",
+	["Color"] = Color3.fromRGB(0, 170, 255)
+})
 
-section1:Button("Button", function()
-	print("Button Clicked")
-end)
-section1:Label("Label")
-section1:KeyBind("KeyBind", Enum.KeyCode.E, function()
-end)
-section1:Slider("Slider", 16, 200, function()
-end)
-section1:Dropdown("Vip", {"1", "2", "3"}, function()
-end)
-section1:TextBox("Input Text", function()
-end)
-section1:TextBox("Input Text", function()
-end)
+local Toggle = Section1:Toggle({
+	["Title"]= "Auto Farm",
+	["Default"] = false,
+	["Multi"] = true,
+	["Options"] = {"Option 1", "Option 2"},
+	["Selecting"] = {"Option 1"},
+	["Callback"] = function(Value) 
+		print(Value)
+	end
+})
+Toggle:Set(false)
+--Section1:Label("Label")
+local Slider = Section1:Slider({
+	["Title"] = "Contras",
+	["Min"] = 0,
+	["Max"] = 100,
+	["Increment"] = 1,
+	["Default"] = 30,
+	["Callback"] = function(Value) 
+		print(Value)
+	end
+})
+Slider:Set(30)
+
+local Input = Section1:TextBox({
+	["Title"] = "Cord Pos",
+	["Callback"] = function(Value) 
+		print(Value)
+	end
+})
+Input:Set("Input Text")
